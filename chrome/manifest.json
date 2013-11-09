@@ -9,12 +9,22 @@
   },
   "default_locale": "en",
   "background": {
-    "scripts": [
-      "src/bg/background.js"
-    ],
+    "scripts": [ "oauth/start.js" ],
     "persistent": true
   },
-  "options_page": "src/options/index.html",
+  "content_scripts": [
+    {
+      "matches": ["http://127.0.0.1:9292/robots.txt*"],
+      "js": ["oauth/inject.js"],
+        "run_at": "document_start"
+    }
+
+  ],
+
+  "web_accessible_resources": [
+    "oauth/finish.html"
+  ],
+  "options_page": "options/index.html",
   "permissions": [
     "idle",
     "tabs",
