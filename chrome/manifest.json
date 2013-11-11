@@ -9,7 +9,7 @@
   },
   "default_locale": "en",
   "background": {
-    "scripts": [ "oauth/start.js" ],
+    "scripts": [ "oauth/oauth.js", "focusstreak/controller.js" ],
     "persistent": true
   },
   "content_scripts": [
@@ -18,9 +18,7 @@
       "js": ["oauth/inject.js"],
         "run_at": "document_start"
     }
-
   ],
-
   "web_accessible_resources": [
     "oauth/finish.html"
   ],
