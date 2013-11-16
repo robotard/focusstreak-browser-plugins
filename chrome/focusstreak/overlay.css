@@ -1,0 +1,24 @@
+div.focusstreak_overlay {
+  opacity:    0.95;
+  background: #000;
+  width:      100%;
+  height:     100%;
+  z-index:    9998 !important;
+  top:        0;
+  left:       0;
+  position:   fixed;
+}
+
+.focusstreak_overlay_frame {
+  background: red;
+  height: 75%;
+  width: 75%;
+  z-index:    9999 !important;
+  position:   fixed;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  margin: auto;
+}

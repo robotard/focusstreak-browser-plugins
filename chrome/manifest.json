@@ -20,7 +20,8 @@
     }
   ],
   "web_accessible_resources": [
-    "oauth/finish.html"
+    "oauth/finish.html",
+    "focusstreak/overlay.html"
   ],
   "options_page": "options/index.html",
   "permissions": [
