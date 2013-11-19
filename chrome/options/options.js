@@ -16,24 +16,50 @@ function first_run(blacklist) {
     heading = "According to your history, these are the top " + blacklist.length + " sites you visit."
   }
 
-  localStorage.blacklist = JSON.stringify(blacklist);
+  set_blacklist(blacklist);
   var welcome_element = document.getElementById("welcome_heading");
   welcome_element.innerText = heading;
   populate_blacklist_table();
 }
 
 function populate_blacklist_table() {
-  blacklist = JSON.parse(localStorage.blacklist);
+  var blacklist = get_blacklist();
   table = document.getElementById("blacklist_table");
   for (var i=0; i < blacklist.length; i++) {
     var row = table.insertRow(-1);
     var icon_cell = row.insertCell(0);
     var link_cell = row.insertCell(1);
+    var remove_cell = row.insertCell(2);
     //FIXME: Some sites are missing favicons since they're actually https://
     icon_cell.innerHTML = "<img src='chrome://favicon/http://" + blacklist[i] + "'></img>";
     link_cell.innerText = blacklist[i];
+    remove_cell.innerHTML = "<a href='#' id='" + blacklist[i] + "'>-</a>"
+    remove_cell.hostname = blacklist[i];
+    remove_cell.onclick = function() { remove_from_blacklist(this.hostname); };
   }
   document.getElementById("loading").innerText = '';
+}
+
+function add_to_blacklist(hostname) {
+  blacklist = get_blacklist();
+  blacklist.push(hostname);
+  set_blacklist(blacklist);
+}
+
+function get_blacklist() {
+  return JSON.parse(localStorage.blacklist);
+}
+
+function set_blacklist(blacklist) {
+  localStorage.blacklist = JSON.stringify(blacklist);
+  populate_blacklist_table();
+}
+
+function remove_from_blacklist(hostname) {
+  var blacklist = get_blacklist();
+  var index = blacklist.indexOf(hostname);
+  blacklist.splice(index, 1);
+  set_blacklist(blacklist);
 }
 
 function has_blacklist() {
