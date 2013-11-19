@@ -5,6 +5,7 @@ var OAuth = {
   },
 
   logStreak: function(duration) {
+    console.log("You Focused for this many seconds: " + duration);
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange=function() {

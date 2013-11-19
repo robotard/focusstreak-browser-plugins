@@ -1,6 +1,37 @@
 var timer = 0;
 var stopwatch = false;
 
+function get_most_visited_sites(callback) {
+  six_months_ago = (new Date().getTime()) - (60 * 60 * 24 * 30 * 6);
+
+  chrome.history.search({text:'', startTime: six_months_ago, maxResults: 90000}, function(items) {
+    history_dict = new Object();
+    var parser = document.createElement('a');
+    var count = 0;
+    for (var i=0; i < items.length; i++) {
+      parser.href = items[i].url
+      count = items[i].typedCount + items[i].visitCount;
+      if (!history_dict.hasOwnProperty(parser.hostname)) {
+        history_dict[parser.hostname] = count;
+      } else {
+        history_dict[parser.hostname] += count;
+      }
+    }
+
+    var tuples = [];
+
+    for (var key in history_dict) tuples.push([key, history_dict[key]]);
+
+    tuples.sort(function(a, b) {
+      a = a[1];
+      b = b[1];
+      return a < b ? -1 : (a > b ? 1 : 0);
+    });
+
+    callback(tuples.slice(Math.max(tuples.length - Math.min(10, tuples.length))));
+  });
+}
+
 function stop_stopwatch() {
   stopwatch = false;
 }
@@ -19,7 +50,6 @@ function start_stopwatch() {
 
 function idle_state_changed(new_state) {
   if (new_state != "active") {
-    console.log("Idle Changed!");
     stop_and_increment_timer();
   } else {
     start_stopwatch();
@@ -28,10 +58,8 @@ function idle_state_changed(new_state) {
 
 function focus_changed(windowId) {
   if (windowId == chrome.windows.WINDOW_ID_NONE) {
-    console.log("Focus Changed LOSS!");
     stop_and_increment_timer();
   } else {
-    console.log("Focus Changed GAIN!");
     start_stopwatch();
     chrome.tabs.query({currentWindow: true, active: true}, function(tab) {
       check_focus(tab[0]);
@@ -42,13 +70,19 @@ function focus_changed(windowId) {
 function check_focus(tab) {
   if (tab.url && tab.url.indexOf("reddit.com") != -1) {
     chrome.tabs.insertCSS(tab.id, {file:"focusstreak/overlay.css"});
-    chrome.tabs.executeScript(tab.id, {file:"focusstreak/overlay.js"}, function() {       chrome.tabs.sendMessage(tab.id, "", function(response) { console.log("Message response callback in the extension:" + response);})});
+    chrome.tabs.executeScript(tab.id, {file:"focusstreak/overlay.js"});
     stop_and_increment_timer();
-    console.log("You Focused for this many seconds: " + Math.floor(timer));
-    OAuth.logStreak(Math.floor(timer));
-    timer = 0;
-    start_stopwatch();
+  } else {
+    if (!stopwatch) {
+      start_stopwatch();
+    }
   }
+}
+
+function log_streak() {
+  OAuth.logStreak(Math.floor(timer));
+  timer = 0;
+  start_stopwatch();
 }
 
 function start() {
@@ -56,17 +90,16 @@ function start() {
   chrome.idle.setDetectionInterval(25);
   chrome.idle.onStateChanged.addListener(idle_state_changed)
   chrome.windows.onFocusChanged.addListener(focus_changed)
+  chrome.runtime.onMessage.addListener(log_streak);
 
   chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if (changeInfo.status === "loading") {
-      console.log("onUpdated!");
       check_focus(tab);
     }
   });
 
   chrome.tabs.onActivated.addListener(function(activeInfo) {
     chrome.tabs.get(activeInfo.tabId, function(tab) {
-      console.log("onActive!");
       check_focus(tab);
    });
   });

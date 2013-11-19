@@ -27,6 +27,7 @@
   "permissions": [
     "idle",
     "tabs",
+    "history",
     "http://*/*",
     "https://*/*"
   ]
