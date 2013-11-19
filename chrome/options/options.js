@@ -52,6 +52,7 @@ function get_blacklist() {
 
 function set_blacklist(blacklist) {
   localStorage.blacklist = JSON.stringify(blacklist);
+  clear_blacklist_table();
   populate_blacklist_table();
 }
 
@@ -60,6 +61,13 @@ function remove_from_blacklist(hostname) {
   var index = blacklist.indexOf(hostname);
   blacklist.splice(index, 1);
   set_blacklist(blacklist);
+}
+
+function clear_blacklist_table() {
+  var table = document.getElementById('blacklist_table');
+  while ( table.rows.length > 0 ) {
+    table.deleteRow(0);
+  }
 }
 
 function has_blacklist() {
