@@ -36,11 +36,14 @@ function focus_changed(windowId) {
   }
 }
 
-var url_parser = document.createElement('a');
+function hostname_from_url(url) {
+  var url_parser = document.createElement('a');
+  url_parser.href = url
+  return url_parser.hostname;
+}
 
 function check_focus(tab) {
-  url_parser.href = tab.url;
-  var hostname = url_parser.hostname;
+  var hostname = hostname_from_url(tab.url);
   //FIXME: Cache the blacklist!
   var blacklist = JSON.parse(localStorage.blacklist);
 
@@ -55,8 +58,8 @@ function check_focus(tab) {
   }
 }
 
-function log_streak() {
-  OAuth.logStreak(Math.floor(timer));
+function log_streak(url) {
+  OAuth.logStreak(hostname_from_url(url), Math.floor(timer));
   timer = 0;
   start_stopwatch();
 }

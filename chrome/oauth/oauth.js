@@ -4,8 +4,8 @@ var OAuth = {
   oauthCall: function(call, params) {
   },
 
-  logStreak: function(duration) {
-    console.log("You Focused for this many seconds: " + duration);
+  logStreak: function(hostname, duration) {
+    console.log(hostname + " broke your Focuse Streak of this many seconds: " + duration);
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange=function() {
@@ -21,7 +21,7 @@ var OAuth = {
     xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
     xhr.setRequestHeader('Authorization', 'OAuth ' + localStorage.access_token);
 
-    xhr.send("name=Google Chrome&info=www.reddit.com&duration=" + duration + "&timestamp=" + Date());
+    xhr.send("name=Google Chrome&info=" + hostname + "&duration=" + duration + "&timestamp=" + Date());
   },
 
   oauthTabCallback: function(tab) {
