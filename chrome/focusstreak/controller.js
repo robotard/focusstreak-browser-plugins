@@ -1,37 +1,6 @@
 var timer = 0;
 var stopwatch = false;
 
-function get_most_visited_sites(callback) {
-  six_months_ago = (new Date().getTime()) - (60 * 60 * 24 * 30 * 6);
-
-  chrome.history.search({text:'', startTime: six_months_ago, maxResults: 90000}, function(items) {
-    history_dict = new Object();
-    var parser = document.createElement('a');
-    var count = 0;
-    for (var i=0; i < items.length; i++) {
-      parser.href = items[i].url
-      count = items[i].typedCount + items[i].visitCount;
-      if (!history_dict.hasOwnProperty(parser.hostname)) {
-        history_dict[parser.hostname] = count;
-      } else {
-        history_dict[parser.hostname] += count;
-      }
-    }
-
-    var tuples = [];
-
-    for (var key in history_dict) tuples.push([key, history_dict[key]]);
-
-    tuples.sort(function(a, b) {
-      a = a[1];
-      b = b[1];
-      return a < b ? -1 : (a > b ? 1 : 0);
-    });
-
-    callback(tuples.slice(Math.max(tuples.length - Math.min(10, tuples.length))));
-  });
-}
-
 function stop_stopwatch() {
   stopwatch = false;
 }
@@ -67,8 +36,15 @@ function focus_changed(windowId) {
   }
 }
 
+var url_parser = document.createElement('a');
+
 function check_focus(tab) {
-  if (tab.url && tab.url.indexOf("reddit.com") != -1) {
+  url_parser.href = tab.url;
+  var hostname = url_parser.hostname;
+  //FIXME: Cache the blacklist!
+  var blacklist = JSON.parse(localStorage.blacklist);
+
+  if (hostname && blacklist.indexOf(hostname) > -1) {
     chrome.tabs.insertCSS(tab.id, {file:"focusstreak/overlay.css"});
     chrome.tabs.executeScript(tab.id, {file:"focusstreak/overlay.js"});
     stop_and_increment_timer();
