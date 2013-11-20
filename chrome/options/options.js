@@ -4,6 +4,17 @@ function load_options() {
   } else {
     populate_blacklist_table();
   }
+
+  document.forms["hostname_form"].onsubmit = submit_new_blacklist_hostname;
+}
+
+function submit_new_blacklist_hostname() {
+  var input = document.forms["hostname_form"]["hostname"];
+  add_to_blacklist(input.value);
+  input.value = "";
+
+  // Reliably returns focus to the input box. (focus()/select() didn't cut it)
+  return false;
 }
 
 function first_run(blacklist) {
