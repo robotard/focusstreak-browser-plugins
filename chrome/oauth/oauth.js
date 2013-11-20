@@ -1,27 +1,35 @@
 var OAuth = {
   oauthDoneCallback: function() { },
 
-  oauthCall: function(call, params) {
-  },
-
   logStreak: function(hostname, duration) {
     console.log(hostname + " broke your Focuse Streak of this many seconds: " + duration);
+    this.oauthCall("POST", "streaks","name=Google Chrome&info=" + hostname + "&duration=" + duration + "&timestamp=" + Date());
+  },
+
+  oauthCall: function(mode, call, params, callback) {
+    callback = typeof callback !== "undefined" ? callback : function() {};
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange=function() {
-      if (xhr.readyState == 4 && xhr.status != 200) {
-        //FIXME: Remove this alert & handle the error gracefully once out of alpha
-        alert("Focus Streak API post failed. See browser console.");
+      if (xhr.readyState !== 4) {
+        return;
+      }
+
+      if (xhr.status == 200) {
+        callback(true);
+      } else {
+        //FIXME: Remove this & handle the error gracefully once out of alpha
         console.log(xhr.responseText);
+        callback(false);
       }
     }
 
     xhr.withCredentials = false;
-    xhr.open('POST', "http://127.0.0.1:9292/api/streaks", true);
+    xhr.open(mode, "http://127.0.0.1:9292/api/" + call, true);
     xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
     xhr.setRequestHeader('Authorization', 'OAuth ' + localStorage.access_token);
 
-    xhr.send("name=Google Chrome&info=" + hostname + "&duration=" + duration + "&timestamp=" + Date());
+    xhr.send(params);
   },
 
   oauthTabCallback: function(tab) {
@@ -38,20 +46,7 @@ var OAuth = {
       return callback(false);
     }
 
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange=function() {
-      if (xhr.readyState != 4) {
-        return;
-      }
-
-      return callback(xhr.status == 200);
-    };
-
-    xhr.withCredentials = false;
-    xhr.open('GET', "http://127.0.0.1:9292/api/streaks", true);
-    xhr.setRequestHeader('Authorization', 'OAuth ' + localStorage.access_token);
-
-    xhr.send();
+    this.oauthCall("GET", "email", "", callback);
   },
 
   login: function(oauthDoneCallback) {
