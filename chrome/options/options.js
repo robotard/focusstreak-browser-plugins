@@ -10,9 +10,12 @@ function load_options() {
 
 function submit_new_blacklist_hostname() {
   var input = document.forms["hostname_form"]["hostname"];
-  add_to_blacklist(input.value);
-  input.value = "";
 
+  if (input.value != "") {
+    add_to_list("blacklist", input.value);
+    input.value = "";
+    populate_blacklist_table();
+  }
   // Reliably returns focus to the input box. (focus()/select() didn't cut it)
   return false;
 }
@@ -27,15 +30,17 @@ function first_run(blacklist) {
     heading = "According to your history, these are the top " + blacklist.length + " sites you visit."
   }
 
-  set_blacklist(blacklist);
+  set_list("blacklist", blacklist);
   var welcome_element = document.getElementById("welcome_heading");
   welcome_element.innerText = heading;
   populate_blacklist_table();
 }
 
 function populate_blacklist_table() {
-  var blacklist = get_blacklist();
+  var blacklist = get_list("blacklist");
+  blacklist.sort();
   table = document.getElementById("blacklist_table");
+  clear_blacklist_table();
   for (var i=0; i < blacklist.length; i++) {
     var row = table.insertRow(-1);
     var icon_cell = row.insertCell(0);
@@ -46,32 +51,39 @@ function populate_blacklist_table() {
     link_cell.innerText = blacklist[i];
     remove_cell.innerHTML = "<a href='#' id='" + blacklist[i] + "'>-</a>"
     remove_cell.hostname = blacklist[i];
-    remove_cell.onclick = function() { remove_from_blacklist(this.hostname); };
+    remove_cell.onclick = function() { remove_from_list("blacklist", this.hostname); add_to_list("whitelist", this.hostname); populate_blacklist_table(); };
   }
   document.getElementById("loading").innerText = '';
 }
 
-function add_to_blacklist(hostname) {
-  blacklist = get_blacklist();
-  blacklist.push(hostname);
-  set_blacklist(blacklist);
+function add_to_list(list_name, hostname) {
+  list = get_list(list_name);
+  if (list.indexOf(hostname) > -1) {
+    return;
+  } else {
+    list.push(hostname);
+    set_list(list_name, list);
+  }
 }
 
-function get_blacklist() {
-  return JSON.parse(localStorage.blacklist);
+function get_list(list_name) {
+  var list = localStorage[list_name];
+  if (list) {
+    return JSON.parse(list);
+  } else {
+    return [];
+  }
 }
 
-function set_blacklist(blacklist) {
-  localStorage.blacklist = JSON.stringify(blacklist);
-  clear_blacklist_table();
-  populate_blacklist_table();
+function set_list(listname, list) {
+  localStorage[listname] = JSON.stringify(list);
 }
 
-function remove_from_blacklist(hostname) {
-  var blacklist = get_blacklist();
-  var index = blacklist.indexOf(hostname);
-  blacklist.splice(index, 1);
-  set_blacklist(blacklist);
+function remove_from_list(listname, hostname) {
+  var list = get_list(listname);
+  var index = list.indexOf(hostname);
+  list.splice(index, 1);
+  set_list(listname, list);
 }
 
 function clear_blacklist_table() {
