@@ -49,7 +49,7 @@ function populate_blacklist_table() {
     //FIXME: Some sites are missing favicons since they're actually https://
     icon_cell.innerHTML = "<img src='chrome://favicon/http://" + blacklist[i] + "'></img>";
     link_cell.innerText = blacklist[i];
-    remove_cell.innerHTML = "<a href='#' id='" + blacklist[i] + "'>-</a>"
+    remove_cell.innerHTML = "<a href='#' id='" + blacklist[i] + "'>[remove]</a>"
     remove_cell.hostname = blacklist[i];
     remove_cell.onclick = function() { remove_from_list("blacklist", this.hostname); add_to_list("whitelist", this.hostname); populate_blacklist_table(); };
   }
