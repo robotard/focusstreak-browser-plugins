@@ -1,9 +1,10 @@
 {
-  "name": "Focus Streak - Flex your focus muscle, be more productive.",
+  "name": "Focus Streak",
+
   "version": "0.0.1",
   "manifest_version": 2,
-  "description": "Eliminate distractions and be more productive.",
-  "homepage_url": "http://focusstreak.com",
+  "description": "Less Distractions. A Better Life. Improve your focus and be more productive.",
+  "homepage_url": "https://www.focusstreak.com",
   "icons": {
     "128": "icons/icon128.png"
   },

@@ -24,6 +24,4 @@ if (access_token) {
   localStorage.access_token_error = getErrorFromArgs(args);
 }
 
-chrome.tabs.getCurrent(function(tab) {
-  chrome.tabs.remove(tab.id, function() { });
-});
+window.location = chrome.extension.getURL('options/options.html' + window.location.hash);
