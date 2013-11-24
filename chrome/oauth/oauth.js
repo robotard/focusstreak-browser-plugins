@@ -25,7 +25,7 @@ var OAuth = {
     }
 
     xhr.withCredentials = false;
-    xhr.open(mode, "http://www.focusstreak.com/api/" + call, true);
+    xhr.open(mode, "https://www.focusstreak.com/api/" + call, true);
     xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
     xhr.setRequestHeader('Authorization', 'OAuth ' + localStorage.access_token);
 
@@ -51,6 +51,6 @@ var OAuth = {
 
   login: function(oauthDoneCallback) {
     this.oauthDoneCallback = oauthDoneCallback;
-    chrome.tabs.create({url: "http://www.focusstreak.com/oauth/authorize?client_id=528e7831565bb50002000002&redirect_uri=http://127.0.0.1:9292/robots.txt&response_type=token"}, this.oauthTabCallback.bind(this));
+    chrome.tabs.create({url: "https://www.focusstreak.com/oauth/authorize?client_id=529138d781f8307b6c000002&redirect_uri=https://www.focusstreak.com/oauth/callback&response_type=token"}, this.oauthTabCallback.bind(this));
   },
 };

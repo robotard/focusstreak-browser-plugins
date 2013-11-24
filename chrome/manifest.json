@@ -14,7 +14,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://127.0.0.1:9292/robots.txt*"],
+      "matches": ["https://www.focusstreak.com/oauth/callback*"],
       "js": ["oauth/inject.js"],
         "run_at": "document_start"
     }
