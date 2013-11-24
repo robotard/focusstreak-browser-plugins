@@ -24,4 +24,4 @@ if (access_token) {
   localStorage.access_token_error = getErrorFromArgs(args);
 }
 
-window.location = chrome.extension.getURL('options/options.html' + window.location.hash);
+window.location = chrome.extension.getURL('options/options.html');

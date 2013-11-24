@@ -33,9 +33,9 @@ var OAuth = {
   },
 
   oauthTabCallback: function(tab) {
-    chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
-      if (tab.id == tabId) {
-        chrome.tabs.onRemoved.removeListener(arguments.callee);
+    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+      if (tab.url == chrome.extension.getURL('options/options.html')) {
+        chrome.tabs.onUpdated.removeListener(arguments.callee);
         this.oauthDoneCallback(localStorage.access_token != undefined);
       }
     }.bind(this));
