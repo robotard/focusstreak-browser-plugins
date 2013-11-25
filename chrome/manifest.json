@@ -1,7 +1,7 @@
 {
   "name": "Focus Streak",
 
-  "version": "0.0.3",
+  "version": "0.0.4",
   "manifest_version": 2,
   "description": "Less Distractions. A Better Life. Improve your focus and be more productive.",
   "homepage_url": "https://www.focusstreak.com",
@@ -18,7 +18,13 @@
       "matches": ["https://www.focusstreak.com/oauth/callback*"],
       "js": ["oauth/inject.js"],
         "run_at": "document_start"
+    },
+    {
+      "matches": ["https://www.focusstreak.com/*", "https://focusstreak.com/*"],
+      "js": ["focusstreak/install_check.js"],
+        "run_at": "document_start"
     }
+
   ],
   "web_accessible_resources": [
     "oauth/finish.html",
